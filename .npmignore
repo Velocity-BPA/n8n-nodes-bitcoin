@@ -1,0 +1,42 @@
+# Source files
+*.ts
+!*.d.ts
+
+# Config files
+tsconfig.json
+.eslintrc.js
+.prettierrc
+jest.config.js
+
+# Development
+test/
+scripts/
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation (keep README)
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# Other
+*.log
+*.tmp
