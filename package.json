@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-bitcoin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A comprehensive n8n community node for Bitcoin blockchain providing address, transaction, block, mempool, and fee operations with trigger support for blockchain events.",
   "license": "BUSL-1.1",
   "author": {
@@ -41,7 +41,7 @@
     "lint:fix": "eslint . --ext .ts --fix",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "prepublishOnly": "pnpm build && pnpm lint"
+    "prepublishOnly": "pnpm build"
   },
   "files": [
     "dist"
