@@ -1,15 +1,12 @@
 /*
- * Copyright (c) Velocity BPA, LLC
+ * Copyright (c) 2026 Velocity BPA, LLC
  * Licensed under the Business Source License 1.1
- * Commercial use requires a separate commercial license.
- * See LICENSE file for details.
  */
 
 const { src, dest } = require('gulp');
 
 function buildIcons() {
-  return src(['nodes/**/*.svg', 'credentials/**/*.svg'])
-    .pipe(dest('dist/'));
+  return src('nodes/**/*.{png,svg}').pipe(dest('dist/nodes'));
 }
 
 exports['build:icons'] = buildIcons;
