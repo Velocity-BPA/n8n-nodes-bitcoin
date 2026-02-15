@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-bitcoin",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "n8n community node for Bitcoin",
   "license": "SEE LICENSE IN LICENSE.md",
   "main": "dist/nodes/Bitcoin/Bitcoin.node.js",
@@ -11,7 +11,6 @@
     "lintfix": "eslint nodes credentials package.json --fix",
     "format": "prettier nodes credentials --write",
     "test": "jest",
-    "preinstall": "npx only-allow pnpm",
     "test:coverage": "jest --coverage",
     "prepublishOnly": "npm run build"
   },
