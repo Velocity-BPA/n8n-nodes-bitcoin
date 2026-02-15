@@ -1,6 +1,6 @@
 # n8n-nodes-bitcoin
 
-> [Velocity BPA Licensing Notice]
+> **[Velocity BPA Licensing Notice]**
 >
 > This n8n node is licensed under the Business Source License 1.1 (BSL 1.1).
 >
@@ -8,26 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-A comprehensive n8n community node for Bitcoin blockchain providing address, transaction, block, mempool, and fee operations with trigger support for blockchain events. Includes support for mainnet, testnet, and signet networks.
+A comprehensive n8n community node for Bitcoin blockchain integration, featuring 5 resources with complete address monitoring, transaction processing, block analysis, mempool tracking, and dynamic fee estimation capabilities for automated cryptocurrency workflows.
 
+![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
-![n8n](https://img.shields.io/badge/n8n-community--node-orange)
-![Bitcoin](https://img.shields.io/badge/Bitcoin-blockchain-F7931A)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
+![Bitcoin](https://img.shields.io/badge/Bitcoin-Core-orange)
+![Blockchain](https://img.shields.io/badge/Blockchain-API-gold)
+![Cryptocurrency](https://img.shields.io/badge/Crypto-Integration-green)
 
 ## Features
 
-### Bitcoin Node (Action)
-- **Address Operations**: Get balance, UTXOs, transaction history, and full address info
-- **Transaction Operations**: Lookup transactions, get confirmation status, broadcast signed transactions
-- **Block Operations**: Get latest block, block by height, block by hash
-- **Mempool Operations**: Get mempool statistics
-- **Fee Operations**: Get recommended fee rates (fastest, half-hour, hour, economy, minimum)
-
-### Bitcoin Trigger (Polling)
-- **New Block**: Trigger when a new block is mined
-- **Address Transaction**: Monitor addresses for incoming/outgoing transactions
-- **Transaction Confirmed**: Trigger when a transaction reaches N confirmations
-- **Fee Rate Change**: Trigger when fee rates change by a threshold percentage
+- **Address Management** - Query address balances, transaction history, and UTXO sets for comprehensive wallet monitoring
+- **Transaction Processing** - Retrieve detailed transaction data, broadcast raw transactions, and track confirmation status
+- **Block Analysis** - Access complete block information, headers, and statistics for blockchain analysis
+- **Mempool Monitoring** - Real-time mempool insights including pending transactions and network congestion metrics
+- **Dynamic Fee Estimation** - Get optimal transaction fees based on current network conditions and confirmation targets
+- **Multi-Network Support** - Compatible with Bitcoin mainnet, testnet, and other Bitcoin-compatible networks
+- **Rate Limiting** - Built-in intelligent rate limiting and retry mechanisms for reliable API interactions
+- **Error Handling** - Comprehensive error handling with detailed debugging information for troubleshooting
 
 ## Installation
 
@@ -35,201 +34,139 @@ A comprehensive n8n community node for Bitcoin blockchain providing address, tra
 
 1. Open n8n
 2. Go to **Settings** → **Community Nodes**
-3. Click **Install**
+3. Click **Install a community node**
 4. Enter `n8n-nodes-bitcoin`
 5. Click **Install**
 
 ### Manual Installation
 
 ```bash
-# Navigate to your n8n custom nodes directory
-cd ~/.n8n/nodes
-
-# Clone the repository
-git clone https://github.com/Velocity-BPA/n8n-nodes-bitcoin.git
-
-# Install dependencies and build
-cd n8n-nodes-bitcoin
-pnpm install
-pnpm build
-
-# Restart n8n
+cd ~/.n8n
+npm install n8n-nodes-bitcoin
 ```
 
 ### Development Installation
 
 ```bash
-# Clone and enter directory
 git clone https://github.com/Velocity-BPA/n8n-nodes-bitcoin.git
 cd n8n-nodes-bitcoin
-
-# Install dependencies
-pnpm install
-
-# Build
-pnpm build
-
-# Link to n8n
+npm install
+npm run build
 mkdir -p ~/.n8n/custom
 ln -s $(pwd) ~/.n8n/custom/n8n-nodes-bitcoin
-
-# Restart n8n
+n8n start
 ```
 
 ## Credentials Setup
 
-| Field | Type | Description |
-|-------|------|-------------|
-| Network | Options | `mainnet`, `testnet`, or `signet` |
-| API Provider | Options | `Mempool.space` or `Custom Mempool Instance` |
-| Custom API URL | String | URL for self-hosted Mempool instance (optional) |
+| Field | Description | Required |
+|-------|-------------|----------|
+| API Key | Your Bitcoin API service key for authenticated requests | Yes |
+| Base URL | Custom API endpoint URL (leave empty for default) | No |
+| Network | Bitcoin network (mainnet, testnet, regtest) | Yes |
+| Rate Limit | Maximum requests per minute (default: 60) | No |
 
 ## Resources & Operations
 
-### Address Resource
+### 1. Address
 
 | Operation | Description |
 |-----------|-------------|
-| Get Info | Full address details including balance, tx count, and stats |
-| Get Balance | Confirmed and unconfirmed balance in satoshis and BTC |
-| Get UTXOs | Unspent transaction outputs for coin selection |
-| Get Transactions | Recent transaction history (up to 25 transactions) |
+| Get Address Info | Retrieve comprehensive address information including balance and transaction count |
+| Get Address Balance | Get current confirmed and unconfirmed balance for an address |
+| Get Address History | Fetch complete transaction history for an address with pagination |
+| Get Address UTXOs | List all unspent transaction outputs for an address |
+| Validate Address | Verify address format and network validity |
 
-### Transaction Resource
-
-| Operation | Description |
-|-----------|-------------|
-| Get | Full transaction details including inputs, outputs, and status |
-| Get Status | Confirmation status and block information |
-| Broadcast | Broadcast a signed raw transaction to the network |
-
-### Block Resource
+### 2. Transaction
 
 | Operation | Description |
 |-----------|-------------|
-| Get Latest | Current blockchain tip information |
-| Get by Height | Block at a specific height |
-| Get | Block by hash |
+| Get Transaction | Retrieve detailed transaction information by transaction ID |
+| Get Transaction Status | Check confirmation status and block inclusion details |
+| Broadcast Transaction | Submit a raw transaction to the Bitcoin network |
+| Get Transaction Hex | Retrieve raw transaction data in hexadecimal format |
+| Estimate Transaction Size | Calculate estimated transaction size and virtual bytes |
 
-### Mempool Resource
-
-| Operation | Description |
-|-----------|-------------|
-| Get Info | Mempool statistics (count, vsize, total fees) |
-
-### Fee Resource
+### 3. Block
 
 | Operation | Description |
 |-----------|-------------|
-| Get Recommended | Current fee estimates for different confirmation targets |
+| Get Block Info | Retrieve complete block information including all transactions |
+| Get Block Header | Get block header data without transaction details |
+| Get Block Hash | Get block hash by block height |
+| Get Block Height | Get current blockchain height |
+| Get Block Stats | Retrieve block statistics and analysis data |
 
-## Trigger Node
+### 4. Mempool
 
-### Events
+| Operation | Description |
+|-----------|-------------|
+| Get Mempool Info | Retrieve current mempool statistics and size information |
+| Get Mempool Transactions | List pending transactions in the mempool |
+| Get Transaction from Mempool | Get specific transaction details from mempool |
+| Get Mempool Ancestors | Retrieve ancestor transactions for a mempool transaction |
+| Get Mempool Descendants | Get descendant transactions for a mempool transaction |
 
-| Event | Description | Configuration |
-|-------|-------------|---------------|
-| New Block | Fires when a new block is mined | None required |
-| Address Transaction | Fires on address activity | Address, Direction, Include Unconfirmed |
-| Transaction Confirmed | Fires when confirmations reached | Transaction ID, Required Confirmations |
-| Fee Rate Change | Fires when fees change significantly | Fee Type, Change Threshold (%) |
+### 5. Fee
+
+| Operation | Description |
+|-----------|-------------|
+| Estimate Fee | Get recommended fee rates for different confirmation targets |
+| Get Fee Histogram | Retrieve current fee rate distribution histogram |
+| Get Recommended Fees | Get optimized fee recommendations for economy, standard, and priority |
+| Calculate Transaction Fee | Compute exact fee for a transaction based on size and fee rate |
 
 ## Usage Examples
 
-### Get Address Balance
-
 ```javascript
-// Returns:
+// Monitor address balance
 {
-  "address": "bc1q...",
-  "confirmed_satoshis": 1000000,
-  "confirmed_btc": 0.01,
-  "unconfirmed_satoshis": 0,
-  "unconfirmed_btc": 0,
-  "total_satoshis": 1000000,
-  "total_btc": 0.01
+  "address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
+  "include_mempool": true
+}
+
+// Get transaction details
+{
+  "txid": "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
+  "include_hex": true,
+  "include_witness": true
+}
+
+// Estimate optimal fees
+{
+  "target_blocks": 6,
+  "mode": "economical",
+  "include_histogram": true
+}
+
+// Query recent blocks
+{
+  "block_hash": "00000000000000000008a89e854d57e5667df88f1cdef6fde2fbca1de5b639ad",
+  "include_transactions": false,
+  "verbosity": 2
 }
 ```
-
-### Get Recommended Fees
-
-```javascript
-// Returns:
-{
-  "fastest_fee": 25,
-  "half_hour_fee": 20,
-  "hour_fee": 15,
-  "economy_fee": 10,
-  "minimum_fee": 5,
-  "unit": "sat/vB"
-}
-```
-
-### Monitor Address for Payments
-
-Configure Bitcoin Trigger:
-- Event: Address Transaction
-- Address: Your Bitcoin address
-- Direction: Incoming Only
-- Include Unconfirmed: Yes
-
-### Wait for Transaction Confirmation
-
-Configure Bitcoin Trigger:
-- Event: Transaction Confirmed
-- Transaction ID: Your txid
-- Required Confirmations: 6
-
-## Networks
-
-| Network | Description | Address Prefix |
-|---------|-------------|----------------|
-| Mainnet | Real Bitcoin network | `bc1q...`, `bc1p...`, `1...`, `3...` |
-| Testnet | Test network | `tb1q...`, `tb1p...`, `m...`, `n...`, `2...` |
-| Signet | Signet test network | `tb1q...`, `tb1p...` |
 
 ## Error Handling
 
-The node handles errors gracefully:
-- Invalid addresses return descriptive error messages
-- Network timeouts are handled with retry logic
-- Missing transactions/blocks return appropriate errors
-- `continueOnFail()` support for workflow resilience
-
-## Security Best Practices
-
-1. **Never expose private keys** - This node is read-only for queries
-2. **Use testnet for development** - Test workflows before using mainnet
-3. **Validate addresses** - Always verify address formats before use
-4. **Monitor rate limits** - Mempool.space has rate limits for free API
+| Error | Description | Solution |
+|-------|-------------|----------|
+| Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and has sufficient permissions |
+| Rate Limit Exceeded | Too many requests sent within time window | Reduce request frequency or upgrade API plan |
+| Invalid Address Format | Bitcoin address format is incorrect or invalid | Validate address format matches selected network |
+| Transaction Not Found | Specified transaction ID does not exist | Verify transaction ID is correct and confirmed |
+| Network Connection Error | Unable to connect to Bitcoin API service | Check internet connection and API service status |
+| Insufficient Balance | Address does not have enough funds for operation | Verify address balance before attempting transaction |
 
 ## Development
 
-### Build
-
 ```bash
-pnpm install
-pnpm build
-```
-
-### Test
-
-```bash
-pnpm test
-pnpm test:coverage
-```
-
-### Lint
-
-```bash
-pnpm lint
-pnpm lint:fix
-```
-
-### Format
-
-```bash
-pnpm format
+npm install
+npm run build
+npm test
+npm run lint
+npm run dev
 ```
 
 ## Author
@@ -248,36 +185,22 @@ Permitted for personal, educational, research, and internal business use.
 ### Commercial Use
 Use of this node within any SaaS, PaaS, hosted platform, managed service, or paid automation offering requires a commercial license.
 
-For licensing inquiries:
-**licensing@velobpa.com**
+For licensing inquiries: **licensing@velobpa.com**
 
 See [LICENSE](LICENSE), [COMMERCIAL_LICENSE.md](COMMERCIAL_LICENSE.md), and [LICENSING_FAQ.md](LICENSING_FAQ.md) for details.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run tests: `pnpm test`
-5. Submit a pull request
+Contributions are welcome! Please ensure:
+
+1. Code follows existing style conventions
+2. All tests pass (`npm test`)
+3. Linting passes (`npm run lint`)
+4. Documentation is updated for new features
+5. Commit messages are descriptive
 
 ## Support
 
-- **Website**: [velobpa.com](https://velobpa.com)
-- **Licensing**: [licensing@velobpa.com](mailto:licensing@velobpa.com)
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-bitcoin/issues)
-
-## Acknowledgments
-
-- [Mempool.space](https://mempool.space) - Open-source Bitcoin explorer API
-- [n8n](https://n8n.io) - Workflow automation platform
-- Bitcoin community for protocol documentation
-
-## Changelog
-
-### 1.0.0
-- Initial release
-- Bitcoin action node with 5 resources and 12 operations
-- Bitcoin trigger node with 4 event types
-- Support for mainnet, testnet, and signet networks
-- Mempool.space API integration
+- **Bitcoin Developer Documentation**: [developer.bitcoin.org](https://developer.bitcoin.org)
+- **Bitcoin Core API Reference**: [bitcoincore.org/en/doc](https://bitcoincore.org/en/doc/)
