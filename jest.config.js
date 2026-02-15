@@ -1,28 +1,24 @@
 /*
- * Copyright (c) Velocity BPA, LLC
+ * Copyright (c) 2026 Velocity BPA, LLC
  * Licensed under the Business Source License 1.1
- * Commercial use requires a separate commercial license.
- * See LICENSE file for details.
  */
 
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/test'],
-  testMatch: ['**/unit/**/*.test.ts', '**/unit/**/*.spec.ts'],
-  testPathIgnorePatterns: ['/node_modules/', '/integration/'],
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-  },
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  testMatch: ['**/test/**/*.test.ts'],
   collectCoverageFrom: [
     'nodes/**/*.ts',
     'credentials/**/*.ts',
     '!**/*.d.ts',
-    '!**/node_modules/**',
+    '!**/index.ts',
   ],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'html'],
-  verbose: true,
-  maxWorkers: 1,
+  moduleFileExtensions: ['ts', 'js', 'json'],
+  roots: ['<rootDir>'],
+  transform: {
+    '^.+\.ts$': 'ts-jest',
+  },
+  testTimeout: 30000,
 };
