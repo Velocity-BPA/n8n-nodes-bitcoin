@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-bitcoin",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "n8n community node for Bitcoin",
   "license": "SEE LICENSE IN LICENSE.md",
   "main": "dist/nodes/Bitcoin/Bitcoin.node.js",
@@ -22,7 +22,7 @@
     "gulp": "^4.0.2",
     "eslint": "^8.56.0",
     "@typescript-eslint/parser": "^7.15.0",
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
     "prettier": "^3.3.2",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.2",
