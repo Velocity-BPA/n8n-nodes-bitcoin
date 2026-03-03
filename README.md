@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-A comprehensive n8n community node for Bitcoin blockchain integration, featuring 5 resources with complete address monitoring, transaction processing, block analysis, mempool tracking, and dynamic fee estimation capabilities for automated cryptocurrency workflows.
+Bitcoin n8n community node providing comprehensive Bitcoin blockchain data access through 5 core resources: Address, Transaction, Block, Mempool, and Fee operations. Enables automated Bitcoin network monitoring, transaction tracking, balance queries, and fee estimation for n8n workflows.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Bitcoin](https://img.shields.io/badge/Bitcoin-Core-orange)
-![Blockchain](https://img.shields.io/badge/Blockchain-API-gold)
-![Cryptocurrency](https://img.shields.io/badge/Crypto-Integration-green)
+![Bitcoin](https://img.shields.io/badge/Bitcoin-F7931E?logo=bitcoin)
+![Blockchain](https://img.shields.io/badge/Blockchain-121D33?logo=blockchain.com)
+![API](https://img.shields.io/badge/REST-API-green)
 
 ## Features
 
-- **Address Management** - Query address balances, transaction history, and UTXO sets for comprehensive wallet monitoring
-- **Transaction Processing** - Retrieve detailed transaction data, broadcast raw transactions, and track confirmation status
-- **Block Analysis** - Access complete block information, headers, and statistics for blockchain analysis
-- **Mempool Monitoring** - Real-time mempool insights including pending transactions and network congestion metrics
-- **Dynamic Fee Estimation** - Get optimal transaction fees based on current network conditions and confirmation targets
-- **Multi-Network Support** - Compatible with Bitcoin mainnet, testnet, and other Bitcoin-compatible networks
-- **Rate Limiting** - Built-in intelligent rate limiting and retry mechanisms for reliable API interactions
-- **Error Handling** - Comprehensive error handling with detailed debugging information for troubleshooting
+- **Address Operations** - Query Bitcoin address balances, transaction history, and UTXO sets
+- **Transaction Management** - Retrieve transaction details, broadcast raw transactions, and monitor confirmations
+- **Block Data Access** - Fetch block information, headers, and merkle proofs by height or hash
+- **Mempool Monitoring** - Real-time unconfirmed transaction tracking and mempool statistics
+- **Fee Estimation** - Dynamic fee rate calculations for optimal transaction timing
+- **Multi-Network Support** - Compatible with Bitcoin mainnet and testnet environments
+- **Real-time Updates** - WebSocket support for live blockchain event monitoring
+- **Batch Operations** - Process multiple addresses or transactions in single requests
 
 ## Installation
 
@@ -61,10 +61,10 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| API Key | Your Bitcoin API service key for authenticated requests | Yes |
-| Base URL | Custom API endpoint URL (leave empty for default) | No |
-| Network | Bitcoin network (mainnet, testnet, regtest) | Yes |
-| Rate Limit | Maximum requests per minute (default: 60) | No |
+| API Key | Bitcoin API service authentication key | Yes |
+| Network | Bitcoin network (mainnet/testnet) | Yes |
+| Base URL | Custom API endpoint URL (optional) | No |
+| Rate Limit | Requests per minute limit | No |
 
 ## Resources & Operations
 
@@ -72,79 +72,95 @@ n8n start
 
 | Operation | Description |
 |-----------|-------------|
-| Get Address Info | Retrieve comprehensive address information including balance and transaction count |
-| Get Address Balance | Get current confirmed and unconfirmed balance for an address |
-| Get Address History | Fetch complete transaction history for an address with pagination |
-| Get Address UTXOs | List all unspent transaction outputs for an address |
-| Validate Address | Verify address format and network validity |
+| Get Balance | Retrieve current balance for a Bitcoin address |
+| Get Transaction History | Fetch all transactions for an address with pagination |
+| Get UTXO Set | List all unspent transaction outputs for an address |
+| Get Address Info | Comprehensive address statistics and metadata |
+| Validate Address | Check if Bitcoin address format is valid |
 
 ### 2. Transaction
 
 | Operation | Description |
 |-----------|-------------|
-| Get Transaction | Retrieve detailed transaction information by transaction ID |
-| Get Transaction Status | Check confirmation status and block inclusion details |
-| Broadcast Transaction | Submit a raw transaction to the Bitcoin network |
-| Get Transaction Hex | Retrieve raw transaction data in hexadecimal format |
-| Estimate Transaction Size | Calculate estimated transaction size and virtual bytes |
+| Get Transaction | Retrieve detailed transaction information by hash |
+| Get Raw Transaction | Fetch raw transaction hex data |
+| Broadcast Transaction | Submit signed transaction to the network |
+| Get Transaction Status | Check confirmation status and block inclusion |
+| Decode Raw Transaction | Parse raw transaction hex into readable format |
 
 ### 3. Block
 
 | Operation | Description |
 |-----------|-------------|
-| Get Block Info | Retrieve complete block information including all transactions |
-| Get Block Header | Get block header data without transaction details |
-| Get Block Hash | Get block hash by block height |
-| Get Block Height | Get current blockchain height |
-| Get Block Stats | Retrieve block statistics and analysis data |
+| Get Block | Retrieve complete block data by hash or height |
+| Get Block Header | Fetch block header information only |
+| Get Block Hash | Get block hash by height number |
+| Get Block Stats | Statistical information about block contents |
+| Get Latest Block | Retrieve most recent block information |
 
 ### 4. Mempool
 
 | Operation | Description |
 |-----------|-------------|
-| Get Mempool Info | Retrieve current mempool statistics and size information |
-| Get Mempool Transactions | List pending transactions in the mempool |
-| Get Transaction from Mempool | Get specific transaction details from mempool |
-| Get Mempool Ancestors | Retrieve ancestor transactions for a mempool transaction |
-| Get Mempool Descendants | Get descendant transactions for a mempool transaction |
+| Get Mempool Info | Current mempool size and fee statistics |
+| Get Mempool Transactions | List unconfirmed transactions in mempool |
+| Get Transaction Ancestors | Find parent transactions in mempool |
+| Get Transaction Descendants | Find child transactions in mempool |
+| Get Mempool Entry | Detailed mempool entry information |
 
 ### 5. Fee
 
 | Operation | Description |
 |-----------|-------------|
-| Estimate Fee | Get recommended fee rates for different confirmation targets |
-| Get Fee Histogram | Retrieve current fee rate distribution histogram |
-| Get Recommended Fees | Get optimized fee recommendations for economy, standard, and priority |
-| Calculate Transaction Fee | Compute exact fee for a transaction based on size and fee rate |
+| Estimate Fee | Calculate recommended fee rates for confirmation targets |
+| Get Fee Statistics | Historical fee rate analysis and trends |
+| Smart Fee | Intelligent fee estimation based on network conditions |
+| Get Fee Rate | Current network fee rates by priority level |
 
 ## Usage Examples
 
 ```javascript
-// Monitor address balance
+// Get Bitcoin address balance
 {
-  "address": "bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh",
-  "include_mempool": true
+  "address": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+  "confirmed": 6889478500000,
+  "unconfirmed": 0,
+  "total": 6889478500000
 }
+```
 
-// Get transaction details
+```javascript
+// Retrieve transaction details
 {
   "txid": "f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16",
-  "include_hex": true,
-  "include_witness": true
+  "version": 1,
+  "size": 275,
+  "vsize": 275,
+  "weight": 1100,
+  "confirmations": 756432,
+  "blocktime": 1231731025
 }
+```
 
-// Estimate optimal fees
+```javascript
+// Get current mempool statistics
 {
-  "target_blocks": 6,
-  "mode": "economical",
-  "include_histogram": true
+  "size": 45623,
+  "bytes": 87456321,
+  "usage": 234567890,
+  "total_fee": 0.05432100,
+  "maxmempool": 300000000,
+  "mempoolminfee": 0.00001000
 }
+```
 
-// Query recent blocks
+```javascript
+// Estimate transaction fees
 {
-  "block_hash": "00000000000000000008a89e854d57e5667df88f1cdef6fde2fbca1de5b639ad",
-  "include_transactions": false,
-  "verbosity": 2
+  "blocks": 6,
+  "feerate": 0.00015420,
+  "satoshis_per_byte": 15.42,
+  "estimated_cost": 0.00234000
 }
 ```
 
@@ -152,12 +168,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and has sufficient permissions |
-| Rate Limit Exceeded | Too many requests sent within time window | Reduce request frequency or upgrade API plan |
-| Invalid Address Format | Bitcoin address format is incorrect or invalid | Validate address format matches selected network |
-| Transaction Not Found | Specified transaction ID does not exist | Verify transaction ID is correct and confirmed |
-| Network Connection Error | Unable to connect to Bitcoin API service | Check internet connection and API service status |
-| Insufficient Balance | Address does not have enough funds for operation | Verify address balance before attempting transaction |
+| Invalid API Key | Authentication failed with provided credentials | Verify API key is correct and active |
+| Address Not Found | Bitcoin address does not exist or has no activity | Check address format and network compatibility |
+| Transaction Not Found | Transaction hash not found in blockchain or mempool | Verify transaction ID and confirm network |
+| Rate Limit Exceeded | Too many requests sent to API endpoint | Implement request throttling or upgrade plan |
+| Network Timeout | Request failed due to network connectivity issues | Retry with exponential backoff strategy |
+| Invalid Transaction Format | Raw transaction data is malformed or corrupt | Validate transaction hex encoding and structure |
 
 ## Development
 
