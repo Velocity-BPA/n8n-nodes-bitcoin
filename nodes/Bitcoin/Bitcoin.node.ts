@@ -84,37 +84,37 @@ export class Bitcoin implements INodeType {
   },
   options: [
     {
-      name: 'Get Address Info',
-      value: 'getAddressInfo',
-      description: 'Get address information including balance and transaction counts',
-      action: 'Get address info',
+      name: 'Get Address Details',
+      value: 'getAddress',
+      description: 'Get address details including balance and transaction count',
+      action: 'Get address details',
     },
     {
-      name: 'Get Address Transactions',
-      value: 'getAddressTransactions',
-      description: 'Get transaction history for an address',
-      action: 'Get address transactions',
+      name: 'Get Address Balance',
+      value: 'getAddressBalance',
+      description: 'Get address balance only',
+      action: 'Get address balance',
     },
     {
-      name: 'Get Address Transactions Chain',
-      value: 'getAddressTransactionsChain',
-      description: 'Get confirmed transaction history for an address',
-      action: 'Get address transactions chain',
+      name: 'Get Address Full',
+      value: 'getAddressFull',
+      description: 'Get address with full transaction details',
+      action: 'Get address full details',
     },
     {
-      name: 'Get Address Transactions Mempool',
-      value: 'getAddressTransactionsMempool',
-      description: 'Get unconfirmed transactions for an address',
-      action: 'Get address transactions mempool',
+      name: 'Generate Address',
+      value: 'generateAddress',
+      description: 'Generate new address and private key',
+      action: 'Generate new address',
     },
     {
-      name: 'Get Address UTXOs',
-      value: 'getAddressUtxos',
-      description: 'Get unspent transaction outputs for an address',
-      action: 'Get address UTXOs',
+      name: 'Get Unspent Outputs',
+      value: 'getUnspentOutputs',
+      description: 'Get unspent transaction outputs for address',
+      action: 'Get unspent outputs',
     },
   ],
-  default: 'getAddressInfo',
+  default: 'getAddress',
 },
 {
   displayName: 'Operation',
@@ -130,44 +130,38 @@ export class Bitcoin implements INodeType {
     {
       name: 'Get Transaction',
       value: 'getTransaction',
-      description: 'Get transaction details by transaction ID',
-      action: 'Get transaction details',
+      description: 'Get transaction details by hash',
+      action: 'Get transaction',
     },
     {
-      name: 'Get Transaction Status',
-      value: 'getTransactionStatus',
-      description: 'Get transaction confirmation status',
-      action: 'Get transaction status',
-    },
-    {
-      name: 'Get Transaction Hex',
-      value: 'getTransactionHex',
-      description: 'Get raw transaction hex data',
-      action: 'Get transaction hex',
-    },
-    {
-      name: 'Get Transaction Merkle Proof',
-      value: 'getTransactionMerkleProof',
-      description: 'Get merkle proof for transaction',
-      action: 'Get transaction merkle proof',
-    },
-    {
-      name: 'Get Transaction Outspend',
-      value: 'getTransactionOutspend',
-      description: 'Get spending status of transaction output',
-      action: 'Get transaction outspend',
-    },
-    {
-      name: 'Get Transaction Outspends',
-      value: 'getTransactionOutspends',
-      description: 'Get spending status of all transaction outputs',
-      action: 'Get transaction outspends',
+      name: 'Create Transaction',
+      value: 'createTransaction',
+      description: 'Create a new transaction',
+      action: 'Create transaction',
     },
     {
       name: 'Broadcast Transaction',
       value: 'broadcastTransaction',
-      description: 'Broadcast a raw transaction to the network',
+      description: 'Broadcast raw transaction to the network',
       action: 'Broadcast transaction',
+    },
+    {
+      name: 'Decode Transaction',
+      value: 'decodeTransaction',
+      description: 'Decode raw transaction hex',
+      action: 'Decode transaction',
+    },
+    {
+      name: 'Get Transaction Confidence',
+      value: 'getTransactionConfidence',
+      description: 'Get transaction confidence score',
+      action: 'Get transaction confidence',
+    },
+    {
+      name: 'Delete Transaction',
+      value: 'deleteTransaction',
+      description: 'Delete transaction from pool if unconfirmed',
+      action: 'Delete transaction',
     },
   ],
   default: 'getTransaction',
@@ -184,76 +178,28 @@ export class Bitcoin implements INodeType {
   },
   options: [
     {
-      name: 'Get Block',
+      name: 'Get Block by Hash',
       value: 'getBlock',
-      description: 'Get block information by block hash',
-      action: 'Get block information',
+      description: 'Get block information by hash',
+      action: 'Get block by hash',
     },
     {
-      name: 'Get Block Status',
-      value: 'getBlockStatus',
-      description: 'Get block confirmation status',
-      action: 'Get block status',
+      name: 'Get Block by Height',
+      value: 'getBlockByHeight',
+      description: 'Get block information by height',
+      action: 'Get block by height',
     },
     {
-      name: 'Get Block Transactions',
-      value: 'getBlockTransactions',
-      description: 'Get transactions in a block',
-      action: 'Get block transactions',
+      name: 'Get Blockchain State',
+      value: 'getBlockchain',
+      description: 'Get latest blockchain state information',
+      action: 'Get blockchain state',
     },
     {
-      name: 'Get Block Transactions Paginated',
-      value: 'getBlockTransactionsPaginated',
-      description: 'Get paginated transactions in a block',
-      action: 'Get paginated block transactions',
-    },
-    {
-      name: 'Get Block Transaction ID',
-      value: 'getBlockTransactionId',
-      description: 'Get transaction ID by index in block',
-      action: 'Get block transaction ID',
-    },
-    {
-      name: 'Get Block Raw',
-      value: 'getBlockRaw',
-      description: 'Get raw block data',
-      action: 'Get raw block data',
-    },
-    {
-      name: 'Get Block Header',
-      value: 'getBlockHeader',
-      description: 'Get block header',
-      action: 'Get block header',
-    },
-    {
-      name: 'Get Block Hash',
-      value: 'getBlockHash',
-      description: 'Get block hash by height',
-      action: 'Get block hash by height',
-    },
-    {
-      name: 'Get Recent Blocks',
-      value: 'getRecentBlocks',
-      description: 'Get list of recent blocks',
-      action: 'Get recent blocks',
-    },
-    {
-      name: 'Get Blocks From Height',
-      value: 'getBlocksFromHeight',
-      description: 'Get blocks starting from specific height',
-      action: 'Get blocks from height',
-    },
-    {
-      name: 'Get Latest Block Hash',
-      value: 'getLatestBlockHash',
-      description: 'Get hash of the latest block',
-      action: 'Get latest block hash',
-    },
-    {
-      name: 'Get Latest Block Height',
-      value: 'getLatestBlockHeight',
-      description: 'Get height of the latest block',
-      action: 'Get latest block height',
+      name: 'Get Latest Blocks',
+      value: 'getBlocks',
+      description: 'Get array of latest blocks',
+      action: 'Get latest blocks',
     },
   ],
   default: 'getBlock',
@@ -270,25 +216,19 @@ export class Bitcoin implements INodeType {
   },
   options: [
     {
-      name: 'Get Mempool Info',
-      value: 'getMempoolInfo',
-      description: 'Get mempool backlog statistics',
-      action: 'Get mempool info',
+      name: 'Get Mempool Transactions',
+      value: 'getMempoolTransactions',
+      description: 'Get unconfirmed transactions from mempool',
+      action: 'Get mempool transactions',
     },
     {
-      name: 'Get Mempool Transaction IDs',
-      value: 'getMempoolTransactionIds',
-      description: 'Get list of transaction IDs in mempool',
-      action: 'Get mempool transaction IDs',
-    },
-    {
-      name: 'Get Recent Mempool Transactions',
-      value: 'getMempoolRecent',
-      description: 'Get list of recent transactions added to mempool',
-      action: 'Get recent mempool transactions',
+      name: 'Get Address Unconfirmed',
+      value: 'getAddressUnconfirmed',
+      description: 'Get unconfirmed transactions for address',
+      action: 'Get address unconfirmed transactions',
     },
   ],
-  default: 'getMempoolInfo',
+  default: 'getMempoolTransactions',
 },
 {
   displayName: 'Operation',
@@ -302,13 +242,19 @@ export class Bitcoin implements INodeType {
   },
   options: [
     {
-      name: 'Get Fee Estimates',
-      value: 'getFeeEstimates',
-      description: 'Get fee estimates for different confirmation targets',
-      action: 'Get fee estimates',
+      name: 'Get Current Fees',
+      value: 'getCurrentFees',
+      description: 'Get current network fee estimates',
+      action: 'Get current network fee estimates',
+    },
+    {
+      name: 'Estimate Transaction Fee',
+      value: 'estimateTransactionFee',
+      description: 'Estimate fee for a transaction',
+      action: 'Estimate transaction fee',
     },
   ],
-  default: 'getFeeEstimates',
+  default: 'getCurrentFees',
 },
       // Parameter definitions
 {
@@ -319,67 +265,174 @@ export class Bitcoin implements INodeType {
   displayOptions: {
     show: {
       resource: ['address'],
-      operation: ['getAddressInfo', 'getAddressTransactions', 'getAddressTransactionsChain', 'getAddressTransactionsMempool', 'getAddressUtxos'],
+      operation: ['getAddress', 'getAddressBalance', 'getAddressFull', 'getUnspentOutputs'],
     },
   },
   default: '',
-  description: 'The Bitcoin address',
+  description: 'The Bitcoin address to query',
 },
 {
-  displayName: 'Last Seen Transaction ID',
-  name: 'lastSeenTxid',
+  displayName: 'Before',
+  name: 'before',
   type: 'string',
-  required: false,
   displayOptions: {
     show: {
       resource: ['address'],
-      operation: ['getAddressTransactions', 'getAddressTransactionsChain'],
+      operation: ['getAddressFull'],
     },
   },
   default: '',
-  description: 'The last transaction ID for pagination',
+  description: 'Get transactions before this transaction hash',
 },
 {
-  displayName: 'Transaction ID',
-  name: 'txid',
+  displayName: 'After',
+  name: 'after',
   type: 'string',
-  required: true,
   displayOptions: {
     show: {
-      resource: ['transaction'],
-      operation: ['getTransaction', 'getTransactionStatus', 'getTransactionHex', 'getTransactionMerkleProof', 'getTransactionOutspend', 'getTransactionOutspends'],
+      resource: ['address'],
+      operation: ['getAddressFull'],
     },
   },
   default: '',
-  description: 'The transaction ID (txid)',
+  description: 'Get transactions after this transaction hash',
 },
 {
-  displayName: 'Output Index (vout)',
-  name: 'vout',
+  displayName: 'Limit',
+  name: 'limit',
   type: 'number',
-  required: true,
   displayOptions: {
     show: {
-      resource: ['transaction'],
-      operation: ['getTransactionOutspend'],
+      resource: ['address'],
+      operation: ['getAddressFull'],
     },
   },
-  default: 0,
-  description: 'The output index (vout) of the transaction output',
+  default: 50,
+  description: 'Maximum number of transactions to return',
 },
 {
-  displayName: 'Raw Transaction Hex',
-  name: 'rawTransactionHex',
+  displayName: 'Unspent Only',
+  name: 'unspentOnly',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['address'],
+      operation: ['getUnspentOutputs'],
+    },
+  },
+  default: true,
+  description: 'Return only unspent outputs',
+},
+{
+  displayName: 'Include Script',
+  name: 'includeScript',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['address'],
+      operation: ['getUnspentOutputs'],
+    },
+  },
+  default: false,
+  description: 'Include script hex in response',
+},
+{
+  displayName: 'Transaction Hash',
+  name: 'hash',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
       resource: ['transaction'],
-      operation: ['broadcastTransaction'],
+      operation: ['getTransaction'],
     },
   },
   default: '',
-  description: 'The raw transaction hex string to broadcast',
+  description: 'The transaction hash to retrieve',
+},
+{
+  displayName: 'Include Hex',
+  name: 'includeHex',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['getTransaction'],
+    },
+  },
+  default: false,
+  description: 'Whether to include the raw transaction hex in the response',
+},
+{
+  displayName: 'Inputs',
+  name: 'inputs',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['createTransaction'],
+    },
+  },
+  default: '',
+  description: 'Transaction inputs as JSON array',
+  placeholder: '[{"addresses": ["address1"], "prev_hash": "hash", "output_index": 0}]',
+},
+{
+  displayName: 'Outputs',
+  name: 'outputs',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['createTransaction'],
+    },
+  },
+  default: '',
+  description: 'Transaction outputs as JSON array',
+  placeholder: '[{"addresses": ["address1"], "value": 1000000}]',
+},
+{
+  displayName: 'Fees',
+  name: 'fees',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['createTransaction'],
+    },
+  },
+  default: 1000,
+  description: 'Transaction fees in satoshis',
+},
+{
+  displayName: 'Raw Transaction',
+  name: 'tx',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['broadcastTransaction', 'decodeTransaction'],
+    },
+  },
+  default: '',
+  description: 'Raw transaction hex string',
+},
+{
+  displayName: 'Transaction Hash',
+  name: 'hash',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['transaction'],
+      operation: ['getTransactionConfidence', 'deleteTransaction'],
+    },
+  },
+  default: '',
+  description: 'The transaction hash',
 },
 {
   displayName: 'Block Hash',
@@ -389,53 +442,39 @@ export class Bitcoin implements INodeType {
   displayOptions: {
     show: {
       resource: ['block'],
-      operation: ['getBlock', 'getBlockStatus', 'getBlockTransactions', 'getBlockTransactionsPaginated', 'getBlockTransactionId', 'getBlockRaw', 'getBlockHeader'],
+      operation: ['getBlock'],
     },
   },
   default: '',
-  description: 'The block hash',
+  description: 'The hash of the block to retrieve',
 },
 {
-  displayName: 'Start Index',
-  name: 'startIndex',
+  displayName: 'Transaction Start Index',
+  name: 'txstart',
   type: 'number',
   required: false,
   displayOptions: {
     show: {
       resource: ['block'],
-      operation: ['getBlockTransactions'],
+      operation: ['getBlock'],
     },
   },
   default: 0,
-  description: 'Start index for transaction list',
+  description: 'The index of the first transaction to include in the response',
 },
 {
-  displayName: 'Start Index',
-  name: 'startIndex',
+  displayName: 'Transaction Limit',
+  name: 'limit',
   type: 'number',
-  required: true,
+  required: false,
   displayOptions: {
     show: {
       resource: ['block'],
-      operation: ['getBlockTransactionsPaginated'],
+      operation: ['getBlock'],
     },
   },
-  default: 0,
-  description: 'Start index for paginated transaction list',
-},
-{
-  displayName: 'Transaction Index',
-  name: 'index',
-  type: 'number',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['block'],
-      operation: ['getBlockTransactionId'],
-    },
-  },
-  default: 0,
-  description: 'Index of the transaction in the block',
+  default: 20,
+  description: 'Maximum number of transactions to include in the response',
 },
 {
   displayName: 'Block Height',
@@ -445,41 +484,124 @@ export class Bitcoin implements INodeType {
   displayOptions: {
     show: {
       resource: ['block'],
-      operation: ['getBlockHash'],
+      operation: ['getBlockByHeight'],
     },
   },
   default: 0,
-  description: 'The block height',
+  description: 'The height of the block to retrieve',
 },
 {
-  displayName: 'Start Height',
-  name: 'startHeight',
+  displayName: 'Transaction Start Index',
+  name: 'txstart',
   type: 'number',
   required: false,
   displayOptions: {
     show: {
       resource: ['block'],
-      operation: ['getRecentBlocks'],
-    },
-  },
-  default: undefined,
-  description: 'Starting block height for recent blocks list',
-},
-{
-  displayName: 'Start Height',
-  name: 'startHeight',
-  type: 'number',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['block'],
-      operation: ['getBlocksFromHeight'],
+      operation: ['getBlockByHeight'],
     },
   },
   default: 0,
-  description: 'Starting block height',
+  description: 'The index of the first transaction to include in the response',
 },
-// No additional parameters needed for getFeeEstimates,
+{
+  displayName: 'Transaction Limit',
+  name: 'limit',
+  type: 'number',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlockByHeight'],
+    },
+  },
+  default: 20,
+  description: 'Maximum number of transactions to include in the response',
+},
+{
+  displayName: 'Block Limit',
+  name: 'limit',
+  type: 'number',
+  required: false,
+  displayOptions: {
+    show: {
+      resource: ['block'],
+      operation: ['getBlocks'],
+    },
+  },
+  default: 10,
+  description: 'Maximum number of blocks to retrieve',
+},
+{
+  displayName: 'Limit',
+  name: 'limit',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['mempool'],
+      operation: ['getMempoolTransactions'],
+    },
+  },
+  default: 50,
+  description: 'Maximum number of transactions to return',
+},
+{
+  displayName: 'In Start',
+  name: 'instart',
+  type: 'string',
+  displayOptions: {
+    show: {
+      resource: ['mempool'],
+      operation: ['getMempoolTransactions'],
+    },
+  },
+  default: '',
+  description: 'Transaction hash to start from (for pagination)',
+},
+{
+  displayName: 'Address',
+  name: 'address',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['mempool'],
+      operation: ['getAddressUnconfirmed'],
+    },
+  },
+  default: '',
+  description: 'Bitcoin address to get unconfirmed transactions for',
+},
+{
+  displayName: 'Transaction Inputs',
+  name: 'inputs',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['fee'],
+      operation: ['estimateTransactionFee'],
+    },
+  },
+  default: '[]',
+  description: 'Array of transaction inputs with address and value',
+  placeholder: '[{"addresses": ["address1"], "output_value": 1000000}]',
+},
+{
+  displayName: 'Transaction Outputs',
+  name: 'outputs',
+  type: 'json',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['fee'],
+      operation: ['estimateTransactionFee'],
+    },
+  },
+  default: '[]',
+  description: 'Array of transaction outputs with address and value',
+  placeholder: '[{"addresses": ["address1"], "value": 500000}]',
+},
     ],
   };
 
@@ -514,104 +636,127 @@ async function executeAddressOperations(
 ): Promise<INodeExecutionData[]> {
   const returnData: INodeExecutionData[] = [];
   const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('bitcoinApi') as any;
 
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
-      
+
       switch (operation) {
-        case 'getAddressInfo': {
+        case 'getAddress': {
           const address = this.getNodeParameter('address', i) as string;
-          
           const options: any = {
             method: 'GET',
-            url: `https://blockstream.info/api/address/${address}`,
+            url: `${credentials.baseUrl}/addrs/${address}`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+            },
             json: true,
           };
-          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getAddressTransactions': {
+
+        case 'getAddressBalance': {
           const address = this.getNodeParameter('address', i) as string;
-          const lastSeenTxid = this.getNodeParameter('lastSeenTxid', i) as string;
-          
-          let url = `https://blockstream.info/api/address/${address}/txs`;
-          if (lastSeenTxid) {
-            url += `/${lastSeenTxid}`;
+          const options: any = {
+            method: 'GET',
+            url: `${credentials.baseUrl}/addrs/${address}/balance`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+            },
+            json: true,
+          };
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getAddressFull': {
+          const address = this.getNodeParameter('address', i) as string;
+          const before = this.getNodeParameter('before', i, '') as string;
+          const after = this.getNodeParameter('after', i, '') as string;
+          const limit = this.getNodeParameter('limit', i, 50) as number;
+
+          let url = `${credentials.baseUrl}/addrs/${address}/full`;
+          const queryParams: string[] = [];
+
+          if (before) queryParams.push(`before=${before}`);
+          if (after) queryParams.push(`after=${after}`);
+          if (limit !== 50) queryParams.push(`limit=${limit}`);
+
+          if (queryParams.length > 0) {
+            url += `?${queryParams.join('&')}`;
           }
-          
+
           const options: any = {
             method: 'GET',
             url,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+            },
             json: true,
           };
-          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getAddressTransactionsChain': {
+
+        case 'generateAddress': {
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/addrs`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json',
+            },
+            json: true,
+          };
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getUnspentOutputs': {
           const address = this.getNodeParameter('address', i) as string;
-          const lastSeenTxid = this.getNodeParameter('lastSeenTxid', i) as string;
-          
-          let url = `https://blockstream.info/api/address/${address}/txs/chain`;
-          if (lastSeenTxid) {
-            url += `/${lastSeenTxid}`;
+          const unspentOnly = this.getNodeParameter('unspentOnly', i, true) as boolean;
+          const includeScript = this.getNodeParameter('includeScript', i, false) as boolean;
+
+          let url = `${credentials.baseUrl}/addrs/${address}/unspent`;
+          const queryParams: string[] = [];
+
+          if (!unspentOnly) queryParams.push('unspentOnly=false');
+          if (includeScript) queryParams.push('includeScript=true');
+
+          if (queryParams.length > 0) {
+            url += `?${queryParams.join('&')}`;
           }
-          
+
           const options: any = {
             method: 'GET',
             url,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+            },
             json: true,
           };
-          
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getAddressTransactionsMempool': {
-          const address = this.getNodeParameter('address', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/address/${address}/txs/mempool`,
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getAddressUtxos': {
-          const address = this.getNodeParameter('address', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/address/${address}/utxo`,
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
+
         default:
           throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
       }
-      
+
       returnData.push({ json: result, pairedItem: { item: i } });
-      
     } catch (error: any) {
       if (this.continueOnFail()) {
         returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
       } else {
-        throw new NodeApiError(this.getNode(), error);
+        if (error.httpCode) {
+          throw new NodeApiError(this.getNode(), error);
+        }
+        throw new NodeOperationError(this.getNode(), error.message);
       }
     }
   }
-  
   return returnData;
 }
 
@@ -621,271 +766,123 @@ async function executeTransactionOperations(
 ): Promise<INodeExecutionData[]> {
   const returnData: INodeExecutionData[] = [];
   const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('bitcoinApi') as any;
 
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
-      
+
       switch (operation) {
         case 'getTransaction': {
-          const txid = this.getNodeParameter('txid', i) as string;
+          const hash = this.getNodeParameter('hash', i) as string;
+          const includeHex = this.getNodeParameter('includeHex', i) as boolean;
+
           const options: any = {
             method: 'GET',
-            url: `https://blockstream.info/api/tx/${txid}`,
+            url: `${credentials.baseUrl}/txs/${hash}`,
+            headers: {
+              'X-API-Key': credentials.apiKey,
+            },
+            qs: includeHex ? { includeHex: 'true' } : {},
             json: true,
           };
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getTransactionStatus': {
-          const txid = this.getNodeParameter('txid', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/tx/${txid}/status`,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getTransactionHex': {
-          const txid = this.getNodeParameter('txid', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/tx/${txid}/hex`,
-            json: false,
-          };
-          const hexData = await this.helpers.httpRequest(options) as any;
-          result = { hex: hexData };
-          break;
-        }
-        
-        case 'getTransactionMerkleProof': {
-          const txid = this.getNodeParameter('txid', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/tx/${txid}/merkleblock-proof`,
-            json: false,
-          };
-          const proofData = await this.helpers.httpRequest(options) as any;
-          result = { merkle_proof: proofData };
-          break;
-        }
-        
-        case 'getTransactionOutspend': {
-          const txid = this.getNodeParameter('txid', i) as string;
-          const vout = this.getNodeParameter('vout', i) as number;
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/tx/${txid}/outspend/${vout}`,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getTransactionOutspends': {
-          const txid = this.getNodeParameter('txid', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `https://blockstream.info/api/tx/${txid}/outspends`,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'broadcastTransaction': {
-          const rawTransactionHex = this.getNodeParameter('rawTransactionHex', i) as string;
+
+        case 'createTransaction': {
+          const inputs = JSON.parse(this.getNodeParameter('inputs', i) as string);
+          const outputs = JSON.parse(this.getNodeParameter('outputs', i) as string);
+          const fees = this.getNodeParameter('fees', i) as number;
+
           const options: any = {
             method: 'POST',
-            url: 'https://blockstream.info/api/tx',
-            body: rawTransactionHex,
+            url: `${credentials.baseUrl}/txs/new`,
             headers: {
-              'Content-Type': 'text/plain',
+              'X-API-Key': credentials.apiKey,
+              'Content-Type': 'application/json',
             },
-            json: false,
-          };
-          const txid = await this.helpers.httpRequest(options) as any;
-          result = { txid: txid };
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { 
-            error: error.message,
-            operation: operation,
-            item_index: i 
-          }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-  
-  return returnData;
-}
-
-async function executeBlockOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
-): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      const baseUrl = 'https://blockstream.info/api';
-
-      switch (operation) {
-        case 'getBlock': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/block/${hash}`,
+            body: {
+              inputs,
+              outputs,
+              fees,
+            },
             json: true,
           };
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getBlockStatus': {
-          const hash = this.getNodeParameter('hash', i) as string;
+        case 'broadcastTransaction': {
+          const tx = this.getNodeParameter('tx', i) as string;
+
           const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/block/${hash}/status`,
+            method: 'POST',
+            url: `${credentials.baseUrl}/txs/push`,
+            headers: {
+              'X-API-Key': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: {
+              tx,
+            },
             json: true,
           };
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getBlockTransactions': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const startIndex = this.getNodeParameter('startIndex', i, 0) as number;
-          let url = `${baseUrl}/block/${hash}/txs`;
-          if (startIndex > 0) {
-            url += `?start_index=${startIndex}`;
-          }
+        case 'decodeTransaction': {
+          const tx = this.getNodeParameter('tx', i) as string;
+
           const options: any = {
-            method: 'GET',
-            url,
+            method: 'POST',
+            url: `${credentials.baseUrl}/txs/decode`,
+            headers: {
+              'X-API-Key': credentials.apiKey,
+              'Content-Type': 'application/json',
+            },
+            body: {
+              tx,
+            },
             json: true,
           };
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getBlockTransactionsPaginated': {
+        case 'getTransactionConfidence': {
           const hash = this.getNodeParameter('hash', i) as string;
-          const startIndex = this.getNodeParameter('startIndex', i) as number;
+
           const options: any = {
             method: 'GET',
-            url: `${baseUrl}/block/${hash}/txs/${startIndex}`,
+            url: `${credentials.baseUrl}/txs/${hash}/confidence`,
+            headers: {
+              'X-API-Key': credentials.apiKey,
+            },
             json: true,
           };
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getBlockTransactionId': {
+        case 'deleteTransaction': {
           const hash = this.getNodeParameter('hash', i) as string;
-          const index = this.getNodeParameter('index', i) as number;
+
           const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/block/${hash}/txid/${index}`,
+            method: 'DELETE',
+            url: `${credentials.baseUrl}/txs/${hash}`,
+            headers: {
+              'X-API-Key': credentials.apiKey,
+            },
             json: true,
           };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
 
-        case 'getBlockRaw': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/block/${hash}/raw`,
-            json: false,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockHeader': {
-          const hash = this.getNodeParameter('hash', i) as string;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/block/${hash}/header`,
-            json: false,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlockHash': {
-          const height = this.getNodeParameter('height', i) as number;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/block-height/${height}`,
-            json: false,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getRecentBlocks': {
-          const startHeight = this.getNodeParameter('startHeight', i, undefined) as number | undefined;
-          let url = `${baseUrl}/blocks`;
-          if (startHeight !== undefined) {
-            url += `?start_height=${startHeight}`;
-          }
-          const options: any = {
-            method: 'GET',
-            url,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getBlocksFromHeight': {
-          const startHeight = this.getNodeParameter('startHeight', i) as number;
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/blocks/${startHeight}`,
-            json: true,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getLatestBlockHash': {
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/blocks/tip/hash`,
-            json: false,
-          };
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-
-        case 'getLatestBlockHeight': {
-          const options: any = {
-            method: 'GET',
-            url: `${baseUrl}/blocks/tip/height`,
-            json: false,
-          };
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
@@ -902,7 +899,136 @@ async function executeBlockOperations(
           pairedItem: { item: i } 
         });
       } else {
-        if (error.httpCode) {
+        throw new NodeApiError(this.getNode(), error);
+      }
+    }
+  }
+
+  return returnData;
+}
+
+async function executeBlockOperations(
+  this: IExecuteFunctions,
+  items: INodeExecutionData[],
+): Promise<INodeExecutionData[]> {
+  const returnData: INodeExecutionData[] = [];
+  const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('bitcoinApi') as any;
+
+  for (let i = 0; i < items.length; i++) {
+    try {
+      let result: any;
+
+      switch (operation) {
+        case 'getBlock': {
+          const hash = this.getNodeParameter('hash', i) as string;
+          const txstart = this.getNodeParameter('txstart', i, 0) as number;
+          const limit = this.getNodeParameter('limit', i, 20) as number;
+
+          const queryParams = new URLSearchParams();
+          if (txstart > 0) queryParams.append('txstart', txstart.toString());
+          if (limit !== 20) queryParams.append('limit', limit.toString());
+          if (credentials.apiKey) queryParams.append('token', credentials.apiKey);
+
+          const queryString = queryParams.toString();
+          const url = `${credentials.baseUrl}/blocks/${hash}${queryString ? '?' + queryString : ''}`;
+
+          const options: any = {
+            method: 'GET',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getBlockByHeight': {
+          const height = this.getNodeParameter('height', i) as number;
+          const txstart = this.getNodeParameter('txstart', i, 0) as number;
+          const limit = this.getNodeParameter('limit', i, 20) as number;
+
+          const queryParams = new URLSearchParams();
+          if (txstart > 0) queryParams.append('txstart', txstart.toString());
+          if (limit !== 20) queryParams.append('limit', limit.toString());
+          if (credentials.apiKey) queryParams.append('token', credentials.apiKey);
+
+          const queryString = queryParams.toString();
+          const url = `${credentials.baseUrl}/blocks/${height}${queryString ? '?' + queryString : ''}`;
+
+          const options: any = {
+            method: 'GET',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getBlockchain': {
+          const queryParams = new URLSearchParams();
+          if (credentials.apiKey) queryParams.append('token', credentials.apiKey);
+
+          const queryString = queryParams.toString();
+          const url = `${credentials.baseUrl}${queryString ? '?' + queryString : ''}`;
+
+          const options: any = {
+            method: 'GET',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'getBlocks': {
+          const limit = this.getNodeParameter('limit', i, 10) as number;
+
+          const queryParams = new URLSearchParams();
+          if (limit !== 10) queryParams.append('limit', limit.toString());
+          if (credentials.apiKey) queryParams.append('token', credentials.apiKey);
+
+          const queryString = queryParams.toString();
+          const url = `${credentials.baseUrl}/blocks${queryString ? '?' + queryString : ''}`;
+
+          const options: any = {
+            method: 'GET',
+            url,
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            json: true,
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        default:
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+      }
+
+      returnData.push({ json: result, pairedItem: { item: i } });
+
+    } catch (error: any) {
+      if (this.continueOnFail()) {
+        returnData.push({ 
+          json: { error: error.message }, 
+          pairedItem: { item: i } 
+        });
+      } else {
+        if (error.httpCode && error.httpCode >= 400) {
           throw new NodeApiError(this.getNode(), error);
         }
         throw new NodeOperationError(this.getNode(), error.message);
@@ -919,70 +1045,80 @@ async function executeMempoolOperations(
 ): Promise<INodeExecutionData[]> {
   const returnData: INodeExecutionData[] = [];
   const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('bitcoinApi') as any;
 
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
 
       switch (operation) {
-        case 'getMempoolInfo': {
+        case 'getMempoolTransactions': {
+          const limit = this.getNodeParameter('limit', i) as number;
+          const instart = this.getNodeParameter('instart', i) as string;
+
+          let url = `${credentials.baseUrl}/txs`;
+          const params: string[] = [];
+          
+          if (limit) {
+            params.push(`limit=${limit}`);
+          }
+          if (instart) {
+            params.push(`instart=${instart}`);
+          }
+          
+          if (params.length > 0) {
+            url += `?${params.join('&')}`;
+          }
+
           const options: any = {
             method: 'GET',
-            url: 'https://blockstream.info/api/mempool',
+            url: url,
             headers: {
-              'Accept': 'application/json',
+              'Content-Type': 'application/json',
             },
             json: true,
           };
-          
+
+          if (credentials.apiKey) {
+            options.url += (url.includes('?') ? '&' : '?') + `token=${credentials.apiKey}`;
+          }
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getMempoolTransactionIds': {
-          const options: any = {
-            method: 'GET',
-            url: 'https://blockstream.info/api/mempool/txids',
-            headers: {
-              'Accept': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+        case 'getAddressUnconfirmed': {
+          const address = this.getNodeParameter('address', i) as string;
 
-        case 'getMempoolRecent': {
+          let url = `${credentials.baseUrl}/addrs/${address}/unconfirmed`;
+
           const options: any = {
             method: 'GET',
-            url: 'https://blockstream.info/api/mempool/recent',
+            url: url,
             headers: {
-              'Accept': 'application/json',
+              'Content-Type': 'application/json',
             },
             json: true,
           };
-          
+
+          if (credentials.apiKey) {
+            options.url += `?token=${credentials.apiKey}`;
+          }
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
         default:
-          throw new NodeOperationError(
-            this.getNode(),
-            `Unknown operation: ${operation}`,
-          );
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
       }
 
-      returnData.push({
-        json: result,
-        pairedItem: { item: i },
-      });
+      returnData.push({ json: result, pairedItem: { item: i } });
     } catch (error: any) {
       if (this.continueOnFail()) {
-        returnData.push({
-          json: { error: error.message },
-          pairedItem: { item: i },
+        returnData.push({ 
+          json: { error: error.message }, 
+          pairedItem: { item: i } 
         });
       } else {
         throw new NodeApiError(this.getNode(), error);
@@ -999,25 +1135,106 @@ async function executeFeeOperations(
 ): Promise<INodeExecutionData[]> {
   const returnData: INodeExecutionData[] = [];
   const operation = this.getNodeParameter('operation', 0) as string;
+  const credentials = await this.getCredentials('bitcoinApi') as any;
 
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
 
       switch (operation) {
-        case 'getFeeEstimates': {
+        case 'getCurrentFees': {
           const options: any = {
             method: 'GET',
-            url: 'https://blockstream.info/api/fee-estimates',
+            url: `${credentials.baseUrl}`,
+            headers: {
+              'User-Agent': 'n8n-bitcoin-node',
+            },
+            qs: {
+              token: credentials.apiKey,
+            },
             json: true,
           };
 
-          result = await this.helpers.httpRequest(options) as any;
+          const response = await this.helpers.httpRequest(options) as any;
+          
+          // Extract fee information from the blockchain info response
+          result = {
+            high_fee_per_kb: response.high_fee_per_kb || null,
+            medium_fee_per_kb: response.medium_fee_per_kb || null,
+            low_fee_per_kb: response.low_fee_per_kb || null,
+            unconfirmed_count: response.unconfirmed_count || 0,
+            last_fork_height: response.last_fork_height || null,
+            last_fork_hash: response.last_fork_hash || null,
+          };
+          break;
+        }
+
+        case 'estimateTransactionFee': {
+          const inputs = this.getNodeParameter('inputs', i) as any;
+          const outputs = this.getNodeParameter('outputs', i) as any;
+
+          let parsedInputs: any;
+          let parsedOutputs: any;
+
+          try {
+            parsedInputs = typeof inputs === 'string' ? JSON.parse(inputs) : inputs;
+            parsedOutputs = typeof outputs === 'string' ? JSON.parse(outputs) : outputs;
+          } catch (parseError: any) {
+            throw new NodeOperationError(
+              this.getNode(),
+              `Invalid JSON format in inputs or outputs: ${parseError.message}`,
+              { itemIndex: i }
+            );
+          }
+
+          if (!Array.isArray(parsedInputs) || !Array.isArray(parsedOutputs)) {
+            throw new NodeOperationError(
+              this.getNode(),
+              'Inputs and outputs must be arrays',
+              { itemIndex: i }
+            );
+          }
+
+          const txData: any = {
+            inputs: parsedInputs,
+            outputs: parsedOutputs,
+          };
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/txs/new`,
+            headers: {
+              'Content-Type': 'application/json',
+              'User-Agent': 'n8n-bitcoin-node',
+            },
+            qs: {
+              token: credentials.apiKey,
+            },
+            body: txData,
+            json: true,
+          };
+
+          const response = await this.helpers.httpRequest(options) as any;
+          
+          result = {
+            tx: response.tx || null,
+            tosign: response.tosign || [],
+            signatures: response.signatures || [],
+            pubkeys: response.pubkeys || [],
+            estimated_fee: response.tx?.fees || null,
+            estimated_fee_kb: response.tx?.fee_per_kb || null,
+            size_bytes: response.tx?.size || null,
+            virtual_size: response.tx?.vsize || null,
+          };
           break;
         }
 
         default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+          throw new NodeOperationError(
+            this.getNode(),
+            `Unknown operation: ${operation}`,
+            { itemIndex: i }
+          );
       }
 
       returnData.push({
@@ -1026,13 +1243,37 @@ async function executeFeeOperations(
       });
 
     } catch (error: any) {
+      if (error.httpCode === 400) {
+        throw new NodeApiError(
+          this.getNode(),
+          { message: 'Bad request - check your parameters', error: error.message },
+          { itemIndex: i }
+        );
+      }
+      
+      if (error.httpCode === 401) {
+        throw new NodeApiError(
+          this.getNode(),
+          { message: 'Unauthorized - check your API key', error: error.message },
+          { itemIndex: i }
+        );
+      }
+
+      if (error.httpCode === 429) {
+        throw new NodeApiError(
+          this.getNode(),
+          { message: 'Rate limit exceeded - please try again later', error: error.message },
+          { itemIndex: i }
+        );
+      }
+
       if (this.continueOnFail()) {
         returnData.push({
           json: { error: error.message },
           pairedItem: { item: i },
         });
       } else {
-        if (error instanceof NodeApiError || error instanceof NodeOperationError) {
+        if (error instanceof NodeOperationError || error instanceof NodeApiError) {
           throw error;
         }
         throw new NodeApiError(this.getNode(), error, { itemIndex: i });
