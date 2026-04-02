@@ -68,204 +68,83 @@ describe('Bitcoin Node', () => {
 
   // Resource-specific tests
 describe('Address Resource', () => {
-  let mockExecuteFunctions: any;
+	let mockExecuteFunctions: any;
 
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://api.blockcypher.com/v1/btc/main',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				baseUrl: 'https://blockstream.info/api',
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+			},
+		};
+	});
 
-  describe('getAddress', () => {
-    it('should get address details successfully', async () => {
-      const mockResponse = {
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        balance: 5000000000,
-        unconfirmed_balance: 0,
-        n_tx: 1,
-        total_received: 5000000000,
-        total_sent: 0,
-      };
+	it('should get address information successfully', async () => {
+		const mockResponse = {
+			address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
+			chain_stats: { funded_txo_count: 1, funded_txo_sum: 5000000000 },
+		};
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAddress';
-        if (paramName === 'address') return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
-        return '';
-      });
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getAddress')
+			.mockReturnValueOnce('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa');
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeAddressOperations.call(mockExecuteFunctions, [{ json: {} }]);
+		const result = await executeAddressOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/addrs/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-        },
-        json: true,
-      });
-    });
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toEqual(mockResponse);
+	});
 
-    it('should handle API errors', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAddress';
-        if (paramName === 'address') return 'invalid-address';
-        return '';
-      });
+	it('should get address transactions successfully', async () => {
+		const mockResponse = [
+			{ txid: 'abc123', status: { confirmed: true } },
+		];
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Invalid address format'));
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getAddressTransactions')
+			.mockReturnValueOnce('1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa')
+			.mockReturnValueOnce('');
 
-      await expect(
-        executeAddressOperations.call(mockExecuteFunctions, [{ json: {} }])
-      ).rejects.toThrow('Invalid address format');
-    });
-  });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-  describe('getAddressBalance', () => {
-    it('should get address balance successfully', async () => {
-      const mockResponse = {
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        balance: 5000000000,
-        unconfirmed_balance: 0,
-      };
+		const result = await executeAddressOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'getAddressBalance';
-        if (paramName === 'address') return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
-        return '';
-      });
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toEqual(mockResponse);
+	});
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+	it('should handle errors when continue on fail is enabled', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getAddress')
+			.mockReturnValueOnce('invalid-address');
 
-      const result = await executeAddressOperations.call(mockExecuteFunctions, [{ json: {} }]);
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(
+			new Error('Invalid address'),
+		);
+		mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/addrs/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa/balance',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-        },
-        json: true,
-      });
-    });
-  });
+		const result = await executeAddressOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-  describe('getAddressFull', () => {
-    it('should get full address details with parameters', async () => {
-      const mockResponse = {
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        txs: [],
-        balance: 5000000000,
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
-        if (paramName === 'operation') return 'getAddressFull';
-        if (paramName === 'address') return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
-        if (paramName === 'limit') return 10;
-        return defaultValue || '';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAddressOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/addrs/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa/full?limit=10',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('generateAddress', () => {
-    it('should generate new address successfully', async () => {
-      const mockResponse = {
-        private: 'KxFC1jmwwCoACiCAWZ3eXa96mBM6tb3TYzGmf6YwgdGWZgawvrtJ',
-        public: '02f12f0b8f8b6c3b4c3b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b7b',
-        address: '1C6Rc3w25VHud3dLDamutbXaXrH95FWVdg',
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        if (paramName === 'operation') return 'generateAddress';
-        return '';
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAddressOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://api.blockcypher.com/v1/btc/main/addrs',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('getUnspentOutputs', () => {
-    it('should get unspent outputs successfully', async () => {
-      const mockResponse = {
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        outputs: [
-          {
-            tx_hash: '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b',
-            tx_output_n: 0,
-            value: 5000000000,
-          },
-        ],
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string, index: number, defaultValue?: any) => {
-        if (paramName === 'operation') return 'getUnspentOutputs';
-        if (paramName === 'address') return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
-        if (paramName === 'unspentOnly') return true;
-        if (paramName === 'includeScript') return false;
-        return defaultValue;
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeAddressOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/addrs/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa/unspent',
-        headers: {
-          'Authorization': 'Bearer test-api-key',
-        },
-        json: true,
-      });
-    });
-  });
+		expect(result).toHaveLength(1);
+		expect(result[0].json.error).toBe('Invalid address');
+	});
 });
 
 describe('Transaction Resource', () => {
@@ -274,170 +153,106 @@ describe('Transaction Resource', () => {
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://api.blockcypher.com/v1/btc/main',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://blockstream.info/api' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
-  test('should get transaction successfully', async () => {
-    const mockResponse = {
-      hash: '123abc',
-      confirmations: 6,
-      value: 1000000,
+  test('should get transaction details successfully', async () => {
+    const mockTransaction = {
+      txid: 'test-txid',
+      version: 1,
+      locktime: 0,
+      vin: [],
+      vout: [],
+      size: 250,
+      weight: 1000,
+      fee: 1000
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getTransaction';
-      if (param === 'hash') return '123abc';
-      if (param === 'includeHex') return false;
-      return undefined;
-    });
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getTransaction')
+      .mockReturnValueOnce('test-txid');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTransaction);
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    const result = await executeTransactionOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    const items = [{ json: {} }];
-    const result = await executeTransactionOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
+    expect(result).toEqual([{ json: mockTransaction, pairedItem: { item: 0 } }]);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://api.blockcypher.com/v1/btc/main/txs/123abc',
-      headers: {
-        'X-API-Key': 'test-api-key',
-      },
-      qs: {},
+      url: 'https://blockstream.info/api/tx/test-txid',
+      headers: { 'Accept': 'application/json' },
       json: true,
     });
   });
 
-  test('should create transaction successfully', async () => {
-    const mockResponse = {
-      tx: {
-        hash: '456def',
-        tosign: ['signature_hash'],
-      },
+  test('should get transaction status successfully', async () => {
+    const mockStatus = {
+      confirmed: true,
+      block_height: 700000,
+      block_hash: 'test-block-hash',
+      block_time: 1609459200
     };
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'createTransaction';
-      if (param === 'inputs') return '[{"addresses": ["addr1"], "prev_hash": "hash1", "output_index": 0}]';
-      if (param === 'outputs') return '[{"addresses": ["addr2"], "value": 1000000}]';
-      if (param === 'fees') return 1000;
-      return undefined;
-    });
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getTransactionStatus')
+      .mockReturnValueOnce('test-txid');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockStatus);
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    const result = await executeTransactionOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    const items = [{ json: {} }];
-    const result = await executeTransactionOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://api.blockcypher.com/v1/btc/main/txs/new',
-      headers: {
-        'X-API-Key': 'test-api-key',
-        'Content-Type': 'application/json',
-      },
-      body: {
-        inputs: [{"addresses": ["addr1"], "prev_hash": "hash1", "output_index": 0}],
-        outputs: [{"addresses": ["addr2"], "value": 1000000}],
-        fees: 1000,
-      },
-      json: true,
-    });
+    expect(result).toEqual([{ json: mockStatus, pairedItem: { item: 0 } }]);
   });
 
   test('should broadcast transaction successfully', async () => {
-    const mockResponse = {
-      tx: {
-        hash: '789ghi',
-        received: '2023-01-01T00:00:00Z',
-      },
-    };
+    const mockTxid = 'broadcast-txid';
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'broadcastTransaction';
-      if (param === 'tx') return '01000000...';
-      return undefined;
-    });
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('broadcastTransaction')
+      .mockReturnValueOnce('01000000...');
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTxid);
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+    const result = await executeTransactionOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    const items = [{ json: {} }];
-    const result = await executeTransactionOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
+    expect(result).toEqual([{ json: { txid: mockTxid }, pairedItem: { item: 0 } }]);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'POST',
-      url: 'https://api.blockcypher.com/v1/btc/main/txs/push',
-      headers: {
-        'X-API-Key': 'test-api-key',
-        'Content-Type': 'application/json',
-      },
-      body: {
-        tx: '01000000...',
-      },
-      json: true,
+      url: 'https://blockstream.info/api/tx',
+      headers: { 'Content-Type': 'text/plain' },
+      body: '01000000...',
+      json: false,
     });
   });
 
-  test('should handle errors correctly', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getTransaction';
-      if (param === 'hash') return 'invalid-hash';
-      return undefined;
-    });
+  test('should handle API errors gracefully', async () => {
+    const mockError = new Error('Transaction not found');
 
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Transaction not found'));
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getTransaction')
+      .mockReturnValueOnce('invalid-txid');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-    const items = [{ json: {} }];
-    const result = await executeTransactionOperations.call(mockExecuteFunctions, items);
+    const result = await executeTransactionOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'Transaction not found' });
+    expect(result).toEqual([{ json: { error: 'Transaction not found' }, pairedItem: { item: 0 } }]);
   });
 
-  test('should get transaction confidence successfully', async () => {
-    const mockResponse = {
-      confidence: 0.95,
-      confirmations: 3,
-    };
+  test('should throw error for unknown operation', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('unknownOperation');
 
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getTransactionConfidence';
-      if (param === 'hash') return '123abc';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const items = [{ json: {} }];
-    const result = await executeTransactionOperations.call(mockExecuteFunctions, items);
-
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://api.blockcypher.com/v1/btc/main/txs/123abc/confidence',
-      headers: {
-        'X-API-Key': 'test-api-key',
-      },
-      json: true,
-    });
+    await expect(
+      executeTransactionOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('Unknown operation: unknownOperation');
   });
 });
 
@@ -447,165 +262,114 @@ describe('Block Resource', () => {
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://api.blockcypher.com/v1/btc/main',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key',
+        baseUrl: 'https://blockstream.info/api'
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+      helpers: { 
+        httpRequest: jest.fn().mockResolvedValue({ id: 'test-block' }),
+        requestWithAuthentication: jest.fn()
       },
     };
   });
 
-  it('should get block by hash successfully', async () => {
-    const mockBlockData = {
-      hash: '00000000000000000002c510d6c49770c85ad17fdc6b81ed1f5f5d8e6f8d8a52',
-      height: 800000,
-      confirmations: 1000,
-      time: 1693507200,
-      txids: ['tx1', 'tx2', 'tx3'],
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getBlock';
-      if (param === 'hash') return '00000000000000000002c510d6c49770c85ad17fdc6b81ed1f5f5d8e6f8d8a52';
-      if (param === 'txstart') return 0;
-      if (param === 'limit') return 20;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockData);
+  it('should get block information by hash', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlock')
+      .mockReturnValueOnce('0000000000000000000f3b9bf7f8e5d8f8a0c9e2b4a0f5a0d0c0e0f0a0b0c0d0');
 
     const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toEqual([{ json: mockBlockData, pairedItem: { item: 0 } }]);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: expect.stringContaining('/blocks/00000000000000000002c510d6c49770c85ad17fdc6b81ed1f5f5d8e6f8d8a52'),
-      headers: { 'Content-Type': 'application/json' },
-      json: true,
+      url: 'https://blockstream.info/api/block/0000000000000000000f3b9bf7f8e5d8f8a0c9e2b4a0f5a0d0c0e0f0a0b0c0d0',
+      headers: {},
+      json: true
     });
+    expect(result[0].json).toEqual({ id: 'test-block' });
   });
 
-  it('should get block by height successfully', async () => {
-    const mockBlockData = {
-      hash: '00000000000000000002c510d6c49770c85ad17fdc6b81ed1f5f5d8e6f8d8a52',
-      height: 800000,
-      confirmations: 1000,
-      time: 1693507200,
-      txids: ['tx1', 'tx2', 'tx3'],
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getBlockByHeight';
-      if (param === 'height') return 800000;
-      if (param === 'txstart') return 0;
-      if (param === 'limit') return 20;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockData);
+  it('should get block status by hash', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlockStatus')
+      .mockReturnValueOnce('0000000000000000000f3b9bf7f8e5d8f8a0c9e2b4a0f5a0d0c0e0f0a0b0c0d0');
 
     const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toEqual([{ json: mockBlockData, pairedItem: { item: 0 } }]);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: expect.stringContaining('/blocks/800000'),
-      headers: { 'Content-Type': 'application/json' },
-      json: true,
+      url: 'https://blockstream.info/api/block/0000000000000000000f3b9bf7f8e5d8f8a0c9e2b4a0f5a0d0c0e0f0a0b0c0d0/status',
+      headers: {},
+      json: true
     });
+    expect(result[0].json).toEqual({ id: 'test-block' });
   });
 
-  it('should get blockchain state successfully', async () => {
-    const mockBlockchainData = {
-      name: 'btc',
-      height: 800000,
-      hash: '00000000000000000002c510d6c49770c85ad17fdc6b81ed1f5f5d8e6f8d8a52',
-      time: '2023-08-31T12:00:00Z',
-      latest_url: 'https://api.blockcypher.com/v1/btc/main/blocks/800000',
-    };
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getBlockchain';
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlockchainData);
+  it('should get block transactions by hash', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getBlockTransactions')
+      .mockReturnValueOnce('0000000000000000000f3b9bf7f8e5d8f8a0c9e2b4a0f5a0d0c0e0f0a0b0c0d0')
+      .mockReturnValueOnce(0);
 
     const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toEqual([{ json: mockBlockchainData, pairedItem: { item: 0 } }]);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: expect.stringContaining('https://api.blockcypher.com/v1/btc/main'),
-      headers: { 'Content-Type': 'application/json' },
-      json: true,
+      url: 'https://blockstream.info/api/block/0000000000000000000f3b9bf7f8e5d8f8a0c9e2b4a0f5a0d0c0e0f0a0b0c0d0/txs',
+      headers: {},
+      json: true
     });
+    expect(result[0].json).toEqual({ id: 'test-block' });
   });
 
-  it('should get latest blocks successfully', async () => {
-    const mockBlocksData = [
-      {
-        hash: '00000000000000000002c510d6c49770c85ad17fdc6b81ed1f5f5d8e6f8d8a52',
-        height: 800000,
-        time: '2023-08-31T12:00:00Z',
-      },
-      {
-        hash: '00000000000000000001b410c6d39660c75bd16fdc5c70ed2e4e4d7e5f7d7b41',
-        height: 799999,
-        time: '2023-08-31T11:50:00Z',
-      },
-    ];
-
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getBlocks';
-      if (param === 'limit') return 10;
-      return undefined;
-    });
-
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockBlocksData);
+  it('should get latest block hash', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getLatestBlockHash');
 
     const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toEqual([{ json: mockBlocksData, pairedItem: { item: 0 } }]);
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: expect.stringContaining('/blocks'),
-      headers: { 'Content-Type': 'application/json' },
-      json: true,
+      url: 'https://blockstream.info/api/blocks/tip/hash',
+      headers: {},
+      json: false
     });
+    expect(result[0].json).toEqual({ id: 'test-block' });
   });
 
-  it('should handle API errors gracefully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getBlock';
-      if (param === 'hash') return 'invalid-hash';
-      return undefined;
-    });
+  it('should get latest block height', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getLatestBlockHeight');
 
-    const apiError = new Error('Block not found');
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(apiError);
+    const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+      method: 'GET',
+      url: 'https://blockstream.info/api/blocks/tip/height',
+      headers: {},
+      json: false
+    });
+    expect(result[0].json).toEqual({ id: 'test-block' });
+  });
+
+  it('should handle errors gracefully when continueOnFail is true', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getBlock');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
     const result = await executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toEqual([{ json: { error: 'Block not found' }, pairedItem: { item: 0 } }]);
+    expect(result[0].json).toEqual({ error: 'API Error' });
   });
 
-  it('should throw error for unknown operation', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'unknownOperation';
-      return undefined;
-    });
+  it('should throw error when continueOnFail is false', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getBlock');
+    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+    mockExecuteFunctions.continueOnFail.mockReturnValue(false);
 
-    await expect(
-      executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }])
-    ).rejects.toThrow('Unknown operation: unknownOperation');
+    await expect(executeBlockOperations.call(mockExecuteFunctions, [{ json: {} }]))
+      .rejects.toThrow('API Error');
   });
 });
 
@@ -615,160 +379,112 @@ describe('Mempool Resource', () => {
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://api.blockcypher.com/v1/btc/main',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://blockstream.info/api' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
-  describe('getMempoolTransactions', () => {
-    it('should get mempool transactions successfully', async () => {
-      const mockResponse = {
-        txs: [
-          {
-            hash: 'abc123',
-            confirmations: 0,
-            size: 250,
-            fee: 1000
-          }
-        ]
+  describe('getMempoolStats operation', () => {
+    it('should get mempool statistics successfully', async () => {
+      const mockMempoolStats = {
+        count: 5000,
+        vsize: 2000000,
+        total_fee: 50000000,
+        fee_histogram: []
       };
+      
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getMempoolStats');
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockMempoolStats);
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getMempoolTransactions';
-          case 'limit': return 50;
-          case 'instart': return '';
-          default: return undefined;
-        }
-      });
+      const result = await executeMempoolOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const items = [{ json: {} }];
-      const result = await executeMempoolOperations.call(mockExecuteFunctions, items);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/txs?limit=50&token=test-api-key',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        url: 'https://blockstream.info/api/mempool',
+        headers: { 'Authorization': 'Bearer test-key' },
         json: true,
       });
+      expect(result).toEqual([{ json: mockMempoolStats, pairedItem: { item: 0 } }]);
     });
 
-    it('should handle pagination with instart parameter', async () => {
-      const mockResponse = { txs: [] };
+    it('should handle errors in getMempoolStats', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getMempoolStats');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getMempoolTransactions';
-          case 'limit': return 25;
-          case 'instart': return 'def456';
-          default: return undefined;
-        }
-      });
+      const result = await executeMempoolOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const items = [{ json: {} }];
-      await executeMempoolOperations.call(mockExecuteFunctions, items);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/txs?limit=25&instart=def456&token=test-api-key',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
+      expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
     });
   });
 
-  describe('getAddressUnconfirmed', () => {
-    it('should get address unconfirmed transactions successfully', async () => {
-      const mockResponse = {
-        address: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-        txs: [
-          {
-            hash: 'xyz789',
-            confirmations: 0,
-            value: 50000000
-          }
-        ]
-      };
+  describe('getMempoolTransactionIds operation', () => {
+    it('should get mempool transaction IDs successfully', async () => {
+      const mockTxIds = ['txid1', 'txid2', 'txid3'];
+      
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getMempoolTransactionIds');
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockTxIds);
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getAddressUnconfirmed';
-          case 'address': return '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa';
-          default: return undefined;
-        }
-      });
+      const result = await executeMempoolOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const items = [{ json: {} }];
-      const result = await executeMempoolOperations.call(mockExecuteFunctions, items);
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main/addrs/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa/unconfirmed?token=test-api-key',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        url: 'https://blockstream.info/api/mempool/txids',
+        headers: { 'Authorization': 'Bearer test-key' },
         json: true,
       });
+      expect(result).toEqual([{ json: mockTxIds, pairedItem: { item: 0 } }]);
     });
 
-    it('should handle API errors', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getAddressUnconfirmed';
-          case 'address': return 'invalid-address';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Invalid address format'));
-
-      const items = [{ json: {} }];
-      
-      await expect(
-        executeMempoolOperations.call(mockExecuteFunctions, items)
-      ).rejects.toThrow();
-    });
-
-    it('should continue on fail when enabled', async () => {
+    it('should handle errors in getMempoolTransactionIds', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getMempoolTransactionIds');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Network Error'));
       mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        switch (param) {
-          case 'operation': return 'getAddressUnconfirmed';
-          case 'address': return 'invalid-address';
-          default: return undefined;
-        }
+
+      const result = await executeMempoolOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toEqual([{ json: { error: 'Network Error' }, pairedItem: { item: 0 } }]);
+    });
+  });
+
+  describe('getRecentMempoolTransactions operation', () => {
+    it('should get recent mempool transactions successfully', async () => {
+      const mockRecentTxs = [
+        { txid: 'tx1', fee: 1000, vsize: 250 },
+        { txid: 'tx2', fee: 1500, vsize: 300 }
+      ];
+      
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getRecentMempoolTransactions');
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockRecentTxs);
+
+      const result = await executeMempoolOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+        method: 'GET',
+        url: 'https://blockstream.info/api/mempool/recent',
+        headers: { 'Authorization': 'Bearer test-key' },
+        json: true,
       });
+      expect(result).toEqual([{ json: mockRecentTxs, pairedItem: { item: 0 } }]);
+    });
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+    it('should handle errors in getRecentMempoolTransactions', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getRecentMempoolTransactions');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Server Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-      const items = [{ json: {} }];
-      const result = await executeMempoolOperations.call(mockExecuteFunctions, items);
+      const result = await executeMempoolOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toHaveLength(1);
-      expect(result[0].json.error).toBe('API Error');
+      expect(result).toEqual([{ json: { error: 'Server Error' }, pairedItem: { item: 0 } }]);
     });
   });
 });
@@ -779,128 +495,79 @@ describe('Fee Resource', () => {
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://api.blockcypher.com/v1/btc/main',
+      getCredentials: jest.fn().mockResolvedValue({ 
+        apiKey: 'test-key', 
+        baseUrl: 'https://blockstream.info/api' 
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
+      helpers: { 
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn() 
       },
     };
   });
 
-  describe('getCurrentFees', () => {
-    it('should get current network fee estimates', async () => {
-      const mockResponse = {
-        high_fee_per_kb: 50000,
-        medium_fee_per_kb: 25000,
-        low_fee_per_kb: 10000,
-        unconfirmed_count: 5000,
-        last_fork_height: 750000,
-        last_fork_hash: 'abc123',
+  describe('getFeeEstimates', () => {
+    it('should get fee estimates successfully', async () => {
+      const mockFeeEstimates = {
+        '1': 87.882,
+        '2': 87.882,
+        '3': 87.882,
+        '6': 80.237,
+        '10': 77.081,
+        '25': 77.081,
+        '144': 1.027,
+        '504': 1.027,
+        '1008': 1.027
       };
 
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('getCurrentFees')
-        .mockReturnValueOnce([{ json: {} }]);
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getFeeEstimates');
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockFeeEstimates);
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const items = [{ json: {} }];
-      const result = await executeFeeOperations.call(mockExecuteFunctions, items);
+      const result = await executeFeeOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'GET',
-        url: 'https://api.blockcypher.com/v1/btc/main',
-        headers: {
-          'User-Agent': 'n8n-bitcoin-node',
-        },
-        qs: {
-          token: 'test-api-key',
-        },
+        url: 'https://blockstream.info/api/fee-estimates',
         json: true,
       });
 
       expect(result).toHaveLength(1);
-      expect(result[0].json).toEqual(mockResponse);
+      expect(result[0].json).toEqual(mockFeeEstimates);
+      expect(result[0].pairedItem).toEqual({ item: 0 });
     });
 
-    it('should handle API errors for getCurrentFees', async () => {
-      mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getCurrentFees');
+    it('should handle API errors when getting fee estimates', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getFeeEstimates');
       mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-      const items = [{ json: {} }];
+      const result = await executeFeeOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+      expect(result).toHaveLength(1);
+      expect(result[0].json.error).toBe('API Error');
+      expect(result[0].pairedItem).toEqual({ item: 0 });
+    });
+
+    it('should throw error when continueOnFail is false', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValue('getFeeEstimates');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(false);
 
       await expect(
-        executeFeeOperations.call(mockExecuteFunctions, items)
+        executeFeeOperations.call(mockExecuteFunctions, [{ json: {} }])
       ).rejects.toThrow('API Error');
     });
   });
 
-  describe('estimateTransactionFee', () => {
-    it('should estimate transaction fee successfully', async () => {
-      const inputs = [{ addresses: ['input_address'], output_value: 1000000 }];
-      const outputs = [{ addresses: ['output_address'], value: 500000 }];
-      
-      const mockResponse = {
-        tx: {
-          fees: 2500,
-          fee_per_kb: 25000,
-          size: 250,
-          vsize: 200,
-        },
-        tosign: ['hash1'],
-        signatures: [],
-        pubkeys: [],
-      };
+  it('should handle unknown operations', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValue('unknownOperation');
 
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('estimateTransactionFee')
-        .mockReturnValueOnce(inputs)
-        .mockReturnValueOnce(outputs);
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const items = [{ json: {} }];
-      const result = await executeFeeOperations.call(mockExecuteFunctions, items);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://api.blockcypher.com/v1/btc/main/txs/new',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'n8n-bitcoin-node',
-        },
-        qs: {
-          token: 'test-api-key',
-        },
-        body: {
-          inputs,
-          outputs,
-        },
-        json: true,
-      });
-
-      expect(result).toHaveLength(1);
-      expect(result[0].json.estimated_fee).toBe(2500);
-    });
-
-    it('should handle invalid JSON in parameters', async () => {
-      mockExecuteFunctions.getNodeParameter
-        .mockReturnValueOnce('estimateTransactionFee')
-        .mockReturnValueOnce('invalid json')
-        .mockReturnValueOnce('[]');
-
-      const items = [{ json: {} }];
-
-      await expect(
-        executeFeeOperations.call(mockExecuteFunctions, items)
-      ).rejects.toThrow('Invalid JSON format');
-    });
+    await expect(
+      executeFeeOperations.call(mockExecuteFunctions, [{ json: {} }])
+    ).rejects.toThrow('Unknown operation: unknownOperation');
   });
 });
 });
